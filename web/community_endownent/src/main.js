@@ -25,8 +25,32 @@ Vue.filter('dateFormat', function(originVal) {
 	return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
 	// return `${y}-${m}-${d}`
 })
+// 公示板过滤器
+Vue.filter('describe', function(value) {
+	if (value.length <= 15) {
+		return value
+	}
+	return value.substr(0, 15) + '...'
+})
+
 Vue.config.productionTip = false
 Vue.use(VueQuillEditor)
+// 全局路由守卫
+router.beforeEach((to, from, next) => {
+	let token = window.sessionStorage.getItem('token')
+	let Authorer = window.sessionStorage.getItem('Authorer')
+	if (token && Authorer) {
+		if (to.fullPath === '/adminhome' && Authorer === '0') {
+			next({ path: '/login' })
+		}
+		next()
+	} else {
+		if (to.fullPath === '/login') {
+			next()
+		}
+		next({ path: '/login' })
+	}
+})
 new Vue({
 	router,
 	render: (h) => h(App),

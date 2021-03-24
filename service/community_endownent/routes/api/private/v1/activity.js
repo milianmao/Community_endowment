@@ -10,7 +10,7 @@ var ImageProcessing = require(path.join(
 /**
  * 社区活动信息
  */
-// 获取社区活动列表
+// 获取社区活动信息
 router.get('/', (req, res) => {
 	ActivityInfo.find(function (err, doc) {
 		if (err) {

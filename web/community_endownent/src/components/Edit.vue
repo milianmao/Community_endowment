@@ -108,8 +108,8 @@
 						</el-upload>
 					</el-tab-pane>
 					<el-tab-pane label="活动人员" name="3">
-						<el-form-item label="主负责人" prop="act_mian">
-							<el-input v-model="act_mian"></el-input>
+						<el-form-item label="主负责人" prop="act_main">
+							<el-input v-model="act_main"></el-input>
 						</el-form-item>
 						<el-form-item label="工作人员" prop="act_secondary">
 							<el-input v-model="act_secondary"></el-input>
@@ -164,7 +164,7 @@ export default {
 				act_pics: [],
 				act_organizers: [],
 			},
-			act_mian: '',
+			act_main: '',
 			act_secondary: '',
 			addFormRules: {
 				act_name: [
@@ -220,7 +220,7 @@ export default {
 		async getActivityInfo(id) {
 			const { data: res } = await this.$http.get('/activity/' + id)
 			this.addForm = res.data
-			this.act_mian = res.data.act_organizers[0].act_mian
+			this.act_main = res.data.act_organizers[0].act_main
 			this.act_secondary = res.data.act_organizers[0].act_secondary
 			console.log(this.addForm)
 		},
@@ -269,7 +269,7 @@ export default {
 			let length = form.act_des.length
 			form.act_des = form.act_des.slice(3, length - 4)
 			const organizers = {
-				act_mian: this.act_mian,
+				act_main: this.act_main,
 				act_secondary: this.act_secondary,
 			}
 			form.act_organizers[0] = organizers
@@ -284,7 +284,7 @@ export default {
 				)
 				if (res.meta.status !== 201)
 					return this.$message.error('添加活动信息失败！')
-				this.$message.success('添加商品成功！')
+				this.$message.success('添加活动信息成功！')
 				this.$router.push('/ActivityInfo')
 			})
 		},
@@ -299,7 +299,7 @@ export default {
 				)
 				if (res.meta.status !== 200)
 					return this.$message.error('修改活动信息失败！')
-				this.$message.success('修改商品成功！')
+				this.$message.success('修改活动信息成功！')
 				this.$router.push('/ActivityInfo')
 			})
 		},

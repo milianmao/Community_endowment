@@ -4,7 +4,7 @@
 			<div>
 				<span>智慧社区养老管理系统</span>
 			</div>
-			<el-button type="info">退出</el-button>
+			<el-button type="info" @click="loginout">退出</el-button>
 		</el-header>
 		<el-container>
 			<el-aside :width="isCollapse ? '64px' : '200px'">
@@ -88,6 +88,11 @@ export default {
 		saveNavState(activePath) {
 			window.sessionStorage.setItem('activePath', activePath)
 			this.activePath = activePath
+		},
+		loginout() {
+			window.sessionStorage.removeItem('token')
+			window.sessionStorage.removeItem('Authorer')
+			this.$router.push('/login')
 		},
 	},
 }

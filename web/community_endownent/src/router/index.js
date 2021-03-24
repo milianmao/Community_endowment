@@ -6,6 +6,9 @@ import OldMan from '../components/OldMan'
 import OldHealth from '../components/OldHealth'
 import ActivityInfo from '../components/ActivityInfo'
 import Edit from '../components/Edit'
+import Organizers from '../components/organizers'
+import ServicePersonnel from '../components/ServicePersonnel'
+import UserHome from '../views/UserHome'
 Vue.use(VueRouter)
 
 const routes = [
@@ -20,11 +23,15 @@ const routes = [
 			{ path: '/ActivityInfo', component: ActivityInfo },
 			{ path: '/Edit', component: Edit },
 			{ path: '/Edit/:id', component: Edit },
+			{ path: '/Organizers', component: Organizers },
+			{ path: '/ServicePersonnel', component: ServicePersonnel },
 		],
 	},
+	{ path: '/userhome', component: UserHome },
 ]
 
 const router = new VueRouter({
+	mode: 'history',
 	routes,
 })
 

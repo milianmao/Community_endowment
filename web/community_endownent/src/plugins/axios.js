@@ -53,7 +53,6 @@ Plugin.install = function(Vue, options) {
 		},
 	})
 }
-// 拦截器给请求头挂载token
 
 Vue.prototype.$http = axios
 Vue.use(Plugin)

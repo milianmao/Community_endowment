@@ -32,6 +32,9 @@ import {
 	Alert,
 	DatePicker,
 	Upload,
+	Carousel,
+	CarouselItem,
+	Image,
 } from 'element-ui'
 Vue.use(Element)
 Vue.use(Tabs)
@@ -62,5 +65,8 @@ Vue.use(Steps)
 Vue.use(Alert)
 Vue.use(DatePicker)
 Vue.use(Upload)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
+Vue.use(Image)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
