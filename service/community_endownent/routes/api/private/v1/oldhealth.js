@@ -68,5 +68,29 @@ router.delete('/:id', (req, res) => {
 	})
 })
 // 查询老人健康信息
-router.get('/:id', (req, res) => {})
+router.get('/sreach', (req, res) => {
+	let sreachKey = new RegExp(req.query.sreachKey, 'i')
+	HealthInfo.find(
+		{
+			$or: [
+				// 多条件查询，数组
+				{ real_name: { $regex: sreachKey } },
+				{ ID_card_number: { $regex: sreachKey } },
+				{ male: { $regex: sreachKey } },
+			],
+		},
+		function (err, doc) {
+			console.log(doc)
+			if (err) {
+				res.sendResult(null, 500, '服务器内部错误')
+				throw err
+			}
+			if (doc.length) {
+				return res.sendResult(doc, 200, '查询成功')
+			} else {
+				return res.sendResult(null, 400, '结果为空')
+			}
+		}
+	)
+})
 module.exports = router

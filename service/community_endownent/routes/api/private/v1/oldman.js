@@ -65,6 +65,29 @@ router.delete('/:id', (req, res) => {
 		res.sendResult(null, 200, '删除成功')
 	})
 })
-// 查询老人信息
-router.get('/:id', (req, res) => {})
+// 查询老人信息 支持模糊查询
+router.get('/sreach', (req, res) => {
+	console.log(req)
+	let sreachKey = new RegExp(req.query.sreachKey, 'i')
+	OldManInfo.find(
+		{
+			$or: [
+				// 多条件查询，数组
+				{ rel_name: { $regex: sreachKey } },
+				{ ID_card_number: { $regex: sreachKey } },
+			],
+		},
+		function (err, doc) {
+			if (err) {
+				res.sendResult(null, 500, '服务器内部错误')
+				throw err
+			}
+			if (doc.length) {
+				return res.sendResult(doc, 200, '查询成功')
+			} else {
+				return res.sendResult(null, 400, '结果为空')
+			}
+		}
+	)
+})
 module.exports = router

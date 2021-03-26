@@ -62,11 +62,9 @@ router.delete('/:id', (req, res) => {
 	})
 })
 // 查询社区活动信息
-router.get('/:id', (req, res) => {
-	console.log(req.params.id)
+router.get('/find/:id', (req, res) => {
 	const _id = mongoose.Types.ObjectId(req.params.id)
 	ActivityInfo.findOne({ _id }, function (err, doc) {
-		console.log(doc)
 		if (err) {
 			res.sendResult(null, 500, '服务器内部错误')
 			throw err
@@ -77,6 +75,21 @@ router.get('/:id', (req, res) => {
 		}
 		console.log(doc)
 		res.sendResult(doc, 200, '查询成功')
+	})
+})
+// 模糊查询
+router.get('/sreach', (req, res) => {
+	let sreachKey = new RegExp(req.query.sreachKey, 'i')
+	ActivityInfo.find({ act_name: { $regex: sreachKey } }, function (err, doc) {
+		if (err) {
+			res.sendResult(null, 500, '服务器内部错误')
+			throw err
+		}
+		if (doc.length) {
+			return res.sendResult(doc, 200, '查询成功')
+		} else {
+			return res.sendResult(null, 400, '结果为空')
+		}
 	})
 })
 module.exports = router

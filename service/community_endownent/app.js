@@ -39,6 +39,9 @@ var resextra = require('./modules/resextra.js')
 app.use(resextra)
 //初始化路由
 mount(app, path.join(process.cwd(), '/routes'), true)
+
+const authMiddleware = require('./middleware/auth')
+app.use(authMiddleware(), mount)
 // 允许访问静态资源
 app.use('/tmp_uploads', express.static('tmp_uploads'))
 app.use('/uploads', express.static('uploads'))

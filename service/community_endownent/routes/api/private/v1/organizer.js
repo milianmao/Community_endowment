@@ -20,5 +20,4 @@ router.get('/', (req, res) => {
 		res.sendResult(doc, 200, '获取成功')
 	})
 })
-
 module.exports = router

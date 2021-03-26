@@ -66,4 +66,30 @@ router.delete('/:id', (req, res) => {
 		res.sendResult(null, 200, '删除成功')
 	})
 })
+// 查询社区服务人员
+router.get('/sreach', (req, res) => {
+	let sreachKey = new RegExp(req.query.sreachKey, 'i')
+	ServicePersonnel.find(
+		{
+			$or: [
+				// 多条件查询，数组
+				{ sp_name: { $regex: sreachKey } },
+				{ sp_ID_card: { $regex: sreachKey } },
+				{ sp_male: { $regex: sreachKey } },
+			],
+		},
+		function (err, doc) {
+			console.log(doc)
+			if (err) {
+				res.sendResult(null, 500, '服务器内部错误')
+				throw err
+			}
+			if (doc.length) {
+				return res.sendResult(doc, 200, '查询成功')
+			} else {
+				return res.sendResult(null, 400, '结果为空')
+			}
+		}
+	)
+})
 module.exports = router
