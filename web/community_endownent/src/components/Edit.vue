@@ -76,7 +76,10 @@
 						</el-form-item>
 					</el-tab-pane>
 					<el-tab-pane label="活动内容" name="1">
-						<quill-editor v-model="addForm.act_des"></quill-editor>
+						<quill-editor
+							v-model="addForm.act_des"
+							ref="qeditor"
+						></quill-editor>
 					</el-tab-pane>
 					<el-tab-pane label="活动图片" name="2">
 						<!-- 图片 -->
@@ -218,7 +221,7 @@ export default {
 	},
 	methods: {
 		async getActivityInfo(id) {
-			const { data: res } = await this.$http.get('/activity/' + id)
+			const { data: res } = await this.$http.get('activity/find/' + id)
 			this.addForm = res.data
 			this.act_main = res.data.act_organizers[0].act_main
 			this.act_secondary = res.data.act_organizers[0].act_secondary
@@ -266,8 +269,6 @@ export default {
 		ProcessData() {
 			// 处理数据
 			const form = _.cloneDeep(this.addForm)
-			let length = form.act_des.length
-			form.act_des = form.act_des.slice(3, length - 4)
 			const organizers = {
 				act_main: this.act_main,
 				act_secondary: this.act_secondary,

@@ -20,7 +20,7 @@
 						<el-button
 							slot="append"
 							icon="el-icon-search"
-							@click="getActivityList"
+							@click="sreach"
 						></el-button>
 					</el-input>
 				</el-col>
@@ -128,12 +128,20 @@ export default {
 				return this.$message.info('已经取消删除用户')
 			}
 			//删除用户
-			const { data: res } = await this.$http.delete('/activity/' + id)
+			const { data: res } = await this.$http.delete('activity/' + id)
 			if (res.meta.status !== 200) {
 				return this.$message.error('删除活动失败')
 			}
 			this.getActivityList()
 			this.$message.success('删除成功')
+		},
+		async sreach() {
+			const { data: res } = await this.$http.get('activity/sreach', {
+				params: { sreachKey: this.queryInfo.query },
+			})
+			if (res.meta.status !== 200) return this.$message.error('查询失败')
+			this.activityList = res.data
+			this.$message.success('查询成功')
 		},
 	},
 }

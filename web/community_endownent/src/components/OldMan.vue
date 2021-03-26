@@ -22,7 +22,7 @@
 						<el-button
 							slot="append"
 							icon="el-icon-search"
-							@click="getOldManList"
+							@click="search"
 						></el-button>
 					</el-input>
 				</el-col>
@@ -369,6 +369,14 @@ export default {
 			}
 			this.getOldManList()
 			this.$message.success('删除用户成功')
+		},
+		async search() {
+			const { data: res } = await this.$http.get('oldman/sreach', {
+				params: { sreachKey: this.queryInfo.query },
+			})
+			if (res.meta.status !== 200) return this.$message.error('查询失败')
+			this.oldManInfoData = res.data
+			this.$message.success('查询成功')
 		},
 	},
 }

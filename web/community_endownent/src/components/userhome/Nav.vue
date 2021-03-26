@@ -1,7 +1,7 @@
 <template>
 	<div class="nav-container">
 		<div class="nav-left">
-			<span>智慧社区养老系统</span>
+			<span>智慧社区</span>
 		</div>
 		<div class="nav-right">
 			<span>欢迎用户：{{ userInfo.rel_name }}</span>
@@ -40,11 +40,10 @@ export default {
 .nav-left {
 	position: absolute;
 	display: inline-block;
-	margin-left: 10%;
+	margin-left: 20%;
 	top: 50%;
 	transform: translateY(-50%);
 	font-size: 24px;
-	color: aqua;
 }
 .nav-right {
 	position: absolute;

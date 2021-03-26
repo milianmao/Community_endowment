@@ -21,7 +21,7 @@
 						<el-button
 							slot="append"
 							icon="el-icon-search"
-							@click="getOrganizersList"
+							@click="sreach"
 						></el-button>
 					</el-input>
 				</el-col>
@@ -62,28 +62,39 @@ export default {
 		}
 	},
 	methods: {
-		async getOrganizersList() {
-			const { data: res } = await this.$http.get('/activity')
-			if (res.meta.status !== 200)
-				return this.$message.error('获取活动信息列表失败')
-			console.log(res)
+		processData(res) {
+			let _organizersList = []
 			res.data.forEach((item) => {
 				if (item.act_organizers[0].act_main) {
-					this.organizersList.push({
+					_organizersList.push({
 						act_name: item.act_name,
 						act_organizers: item.act_organizers[0].act_main,
 						status: '0',
 					})
 				}
 				if (item.act_organizers[0].act_secondary) {
-					this.organizersList.push({
+					_organizersList.push({
 						act_name: item.act_name,
 						act_organizers: item.act_organizers[0].act_secondary,
 						status: '1',
 					})
 				}
 			})
-			this.$message.success(res.meta.msg)
+			return _organizersList
+		},
+		async getOrganizersList() {
+			const { data: res } = await this.$http.get('/activity')
+			if (res.meta.status !== 200)
+				return this.$message.error('获取活动信息列表失败')
+			this.organizersList = this.processData(res)
+		},
+		async sreach() {
+			const { data: res } = await this.$http.get('activity/sreach', {
+				params: { sreachKey: this.queryInfo.query },
+			})
+			if (res.meta.status !== 200) return this.$message.error('查询失败')
+			this.organizersList = this.processData(res)
+			this.$message.success('查询成功')
 		},
 	},
 }

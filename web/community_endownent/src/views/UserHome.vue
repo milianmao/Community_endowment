@@ -60,26 +60,49 @@
 									<span>帮助栏</span>
 								</div>
 								<div>
-									<el-form>
-										<el-form-item>
+									<el-form
+										ref="helpFormRef"
+										:model="helpForm"
+										label-width="80px"
+										:rules="helpFormRules"
+									>
+										<el-form-item
+											prop="service"
+											label="服务类型"
+										>
 											<el-cascader
+												filterable
+												v-model="helpForm.service"
 												placeholder="请选择服务类型"
-												v-model="value"
 												:options="options"
 												:props="{
 													expandTrigger: 'hover',
 												}"
-												@change="handleChange"
 											></el-cascader>
 										</el-form-item>
-										<el-form-item label="备注：">
+										<el-form-item>
+											<el-input
+												placeholder="请输入家庭住址"
+												v-model="helpForm.address"
+											></el-input>
+										</el-form-item>
+										<el-form-item
+											label="备注："
+											prop="note
+                                            "
+										>
 											<el-input
 												:rows="8"
 												type="textarea"
 												placeholder="请输入内容"
-												v-model="textarea"
+												v-model="helpForm.note"
 											>
 											</el-input>
+										</el-form-item>
+										<el-form-item>
+											<el-button type="info" @click="help"
+												>提交</el-button
+											>
 										</el-form-item>
 									</el-form>
 								</div>
@@ -140,6 +163,21 @@ export default {
 		return {
 			userInfo: [],
 			value: [],
+			helpForm: {
+				service: '',
+				address: '',
+				note: '',
+			},
+			helpFormRules: {
+				service: [
+					{
+						type: 'array',
+						required: true,
+						message: '请选择XXX',
+						trigger: 'change',
+					},
+				],
+			},
 			imges: [
 				{ id: '1', url: img1 },
 				{ id: '2', url: img2 },
@@ -166,7 +204,7 @@ export default {
 					],
 				},
 				{
-					value: '0',
+					value: '1',
 					label: '药品需求',
 				},
 				{
@@ -199,7 +237,20 @@ export default {
 			})
 			console.log(this.boardInfo)
 		},
-		handleChange() {},
+		handleChange(value) {
+			console.log(value)
+		},
+		help() {
+			this.$refs.helpFormRef.validate(async (valid) => {
+				if (!valid) return
+				console.log(this.helpForm.type)
+				// const { data: res } = await this.$http.post('/order', {
+				// 	rel_name: this.userInfo.rel_name,
+				// 	add_address: this.helpForm.address,
+				//     post_type: this.helpForm.type
+				// })
+			})
+		},
 	},
 }
 </script>

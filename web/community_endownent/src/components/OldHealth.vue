@@ -20,7 +20,7 @@
 						<el-button
 							slot="append"
 							icon="el-icon-search"
-							@click="getOldManHealthList"
+							@click="sreach"
 						></el-button>
 					</el-input>
 				</el-col>
@@ -271,7 +271,7 @@ export default {
 					'/oldhealth/add',
 					this.addForm
 				)
-				if (res.meta.status !== 200)
+				if (res.meta.status !== 201)
 					return this.$message.error('添加失败')
 				this.$message.success('添加成功')
 				this.addDialogVisible = false
@@ -320,6 +320,14 @@ export default {
 			}
 			this.getOldManHealthList()
 			this.$message.success('删除用户成功')
+		},
+		async sreach() {
+			const { data: res } = await this.$http.get('oldhealth/sreach', {
+				params: { sreachKey: this.queryInfo.query },
+			})
+			if (res.meta.status !== 200) return this.$message.error('查询失败')
+			this.oldManHealthoData = res.data
+			this.$message.success('查询成功')
 		},
 	},
 }

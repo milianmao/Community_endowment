@@ -15,7 +15,9 @@ let config = {
 const _axios = axios.create(config)
 _axios.interceptors.request.use(
 	function(config) {
+		console.log('1')
 		// 拦截器给请求头挂载token
+		console.log(config.headers)
 		config.headers.Authorization = window.sessionStorage.getItem('token')
 		return config
 	},

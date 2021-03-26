@@ -20,7 +20,7 @@
 						<el-button
 							slot="append"
 							icon="el-icon-search"
-							@click="getServerPersonnelInfo"
+							@click="sreach"
 						></el-button>
 					</el-input>
 				</el-col>
@@ -245,7 +245,6 @@ export default {
 			console.log(res)
 			if (res.meta.status !== 200) return this.$message.error('获取失败')
 			this.spInfoList = res.data
-			this.$message.success('获取列表成功')
 		},
 		// 添加服务人员业务
 		AddSP() {
@@ -311,6 +310,17 @@ export default {
 			}
 			this.getServerPersonnelInfo()
 			this.$message.success('删除成功')
+		},
+		async sreach() {
+			const { data: res } = await this.$http.get(
+				'servicePersonnel/sreach',
+				{
+					params: { sreachKey: this.queryInfo.query },
+				}
+			)
+			if (res.meta.status !== 200) return this.$message.error('查询失败')
+			this.spInfoList = res.data
+			this.$message.success('查询成功')
 		},
 	},
 }

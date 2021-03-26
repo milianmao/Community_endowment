@@ -10,6 +10,16 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
+
+axios.interceptors.request.use((config) => {
+	let token = window.sessionStorage.getItem('token')
+	if (token) {
+		config.headers.Authorization = window.sessionStorage.getItem('token')
+	}
+
+	//最后必须return config
+	return config
+})
 //全局vue过滤器(时间戳过滤器)
 Vue.filter('dateFormat', function(originVal) {
 	const dt = new Date(originVal)
@@ -27,12 +37,12 @@ Vue.filter('dateFormat', function(originVal) {
 })
 // 公示板过滤器
 Vue.filter('describe', function(value) {
-	if (value.length <= 15) {
-		return value
+	var des = value.replace(/<[^>]*>/g, '')
+	if (des.length <= 15) {
+		return des
 	}
-	return value.substr(0, 15) + '...'
+	return des.substr(0, 50) + '...'
 })
-
 Vue.config.productionTip = false
 Vue.use(VueQuillEditor)
 // 全局路由守卫
@@ -41,12 +51,22 @@ router.beforeEach((to, from, next) => {
 	let Authorer = window.sessionStorage.getItem('Authorer')
 	if (token && Authorer) {
 		if (to.fullPath === '/adminhome' && Authorer === '0') {
+			Vue.prototype.$message({
+				message: '非法操作',
+				type: 'error',
+			})
 			next({ path: '/login' })
 		}
 		next()
 	} else {
 		if (to.fullPath === '/login') {
 			next()
+		}
+		if (to.fullPath !== '/login') {
+			Vue.prototype.$message({
+				message: '请先登录',
+				type: 'error',
+			})
 		}
 		next({ path: '/login' })
 	}
