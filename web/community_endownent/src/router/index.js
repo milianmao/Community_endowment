@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login'
+import Home from '../components/Home'
 import AdminHome from '../views/AdminHome'
 import OldMan from '../components/OldMan'
 import OldHealth from '../components/OldHealth'
@@ -9,6 +10,8 @@ import Edit from '../components/Edit'
 import Organizers from '../components/organizers'
 import ServicePersonnel from '../components/ServicePersonnel'
 import UserHome from '../views/UserHome'
+import Order from '../components/Order'
+import ServiceBusinesses from '../components/ServiceBusinesses'
 Vue.use(VueRouter)
 
 const routes = [
@@ -17,7 +20,9 @@ const routes = [
 	{
 		path: '/adminhome',
 		component: AdminHome,
+		redirect: '/Home',
 		children: [
+			{ path: '/Home', component: Home },
 			{ path: '/OldMan', component: OldMan },
 			{ path: '/OldHealth', component: OldHealth },
 			{ path: '/ActivityInfo', component: ActivityInfo },
@@ -25,6 +30,8 @@ const routes = [
 			{ path: '/Edit/:id', component: Edit },
 			{ path: '/Organizers', component: Organizers },
 			{ path: '/ServicePersonnel', component: ServicePersonnel },
+			{ path: '/Order', component: Order },
+			{ path: '/ServiceBusinesses', component: ServiceBusinesses },
 		],
 	},
 	{ path: '/userhome', component: UserHome },

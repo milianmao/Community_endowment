@@ -67,7 +67,7 @@ router.delete('/:id', (req, res) => {
 })
 // 查询老人信息 支持模糊查询
 router.get('/sreach', (req, res) => {
-	console.log(req)
+	console.log(req.query.sreachKey)
 	let sreachKey = new RegExp(req.query.sreachKey, 'i')
 	OldManInfo.find(
 		{

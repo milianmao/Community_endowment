@@ -78,6 +78,7 @@
 												:props="{
 													expandTrigger: 'hover',
 												}"
+												@change="handleChange"
 											></el-cascader>
 										</el-form-item>
 										<el-form-item>
@@ -110,6 +111,7 @@
 						</div>
 					</el-col>
 				</el-row>
+				<!-- 反馈投诉区域 -->
 				<el-row>
 					<el-col>
 						<el-card class="feedback-card">
@@ -117,29 +119,117 @@
 								<span>反馈栏</span>
 							</div>
 							<div>
-								<el-form>
-									<el-form-item>
+								<el-form
+									ref="fbFormRef"
+									:model="fbForm"
+									label-width="80px"
+									:rules="fbFormRules"
+								>
+									<el-form-item
+										label="反馈类型"
+										prop="service"
+									>
 										<el-cascader
+											v-model="fbForm.service"
 											placeholder="请选择反馈类型"
-											v-model="value"
 											:options="options1"
 											@change="handleChange"
 										></el-cascader>
 									</el-form-item>
-									<el-form-item label="备注：">
+									<el-form-item label="备注：" prop="note">
 										<el-input
 											:rows="8"
 											type="textarea"
 											placeholder="请输入内容"
-											v-model="textarea"
+											v-model="fbForm.note"
 										>
 										</el-input>
+									</el-form-item>
+									<el-form-item>
+										<el-button type="info" @click="feedback"
+											>提交</el-button
+										>
 									</el-form-item>
 								</el-form>
 							</div>
 						</el-card>
 					</el-col>
 				</el-row>
+				<!-- 完善信息区域 -->
+				<el-dialog
+					title="完善信息"
+					:visible.sync="addDialogVisible"
+					width="30%"
+					@close="addDialogClose"
+					:close-on-click-modal="false"
+				>
+					<!-- 内容主体区域 -->
+					<el-form
+						:model="addForm"
+						:rules="addRules"
+						ref="addFormRef"
+						label-width="80px"
+					>
+						<el-form-item label="姓名" prop="rel_name">
+							<el-input
+								v-model="this.userInfo.rel_name"
+								disabled
+							></el-input>
+						</el-form-item>
+						<el-form-item label="性别" prop="male">
+							<el-select
+								v-model="addForm.male"
+								placeholder="请选择"
+							>
+								<el-option
+									v-for="item in MaleOptions"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value"
+								>
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="年龄" prop="age">
+							<el-input v-model="addForm.age"></el-input>
+						</el-form-item>
+						<el-form-item label="民族" prop="national">
+							<el-select
+								v-model="addForm.national"
+								placeholder="请选择"
+							>
+								<el-option
+									v-for="item in NationalOptions"
+									:key="item.id"
+									:label="item.name"
+									:value="item.id"
+								>
+								</el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="身份证号" prop="ID_card_number">
+							<el-input
+								v-model="this.userInfo.ID_card_number"
+								disabled
+							></el-input>
+						</el-form-item>
+						<el-form-item label="家庭住址" prop="home_address">
+							<el-input v-model="addForm.home_address"></el-input>
+						</el-form-item>
+						<el-form-item label="联系电话" prop="phone">
+							<el-input v-model="addForm.phone"></el-input>
+						</el-form-item>
+					</el-form>
+					<!-- 底部区域 -->
+					<span slot="footer" class="dialog-footer">
+						<el-button @click="addDialogVisible = false"
+							>取 消</el-button
+						>
+						<el-button type="primary" @click="addOldMan"
+							>确 定</el-button
+						>
+					</span>
+				</el-dialog>
 			</el-main>
 		</el-scrollbar>
 	</el-container>
@@ -150,17 +240,34 @@ import img1 from '../assets/png/1.jpg'
 import img2 from '../assets/png/2.jpg'
 import img3 from '../assets/png/3.png'
 import img4 from '../assets/png/4.jpg'
+import nationals from '../assets/national.json'
 export default {
 	components: {
 		Nav,
 	},
 	created() {
 		this.userInfo = JSON.parse(window.sessionStorage.getItem('userInfo'))
-		console.log(this.userInfo)
+
 		this.getBoardInfo()
+		this.getOldManInfo()
 	},
 	data() {
 		return {
+			addForm: {
+				rel_name: '',
+				male: '',
+				age: '',
+				national: '',
+				ID_card_number: '',
+				home_address: '',
+				phone: '',
+			},
+			fbForm: {
+				service: '',
+				note: '',
+			},
+			addDialogVisible: false,
+			infoStatus: false,
 			userInfo: [],
 			value: [],
 			helpForm: {
@@ -168,16 +275,72 @@ export default {
 				address: '',
 				note: '',
 			},
+			fbFormRules: {
+				service: [
+					{
+						type: 'array',
+						required: true,
+						message: '请选择反馈类型',
+						trigger: 'change',
+					},
+				],
+				note: [
+					{
+						required: true,
+						message: '请填写意见',
+						trigger: 'blur',
+					},
+				],
+			},
 			helpFormRules: {
 				service: [
 					{
 						type: 'array',
 						required: true,
-						message: '请选择XXX',
+						message: '请选择服务类型',
 						trigger: 'change',
 					},
 				],
 			},
+			addRules: {
+				male: [
+					{ required: true, message: '请选择性别', trigger: 'blur' },
+				],
+				age: [
+					{ required: true, message: '请输入年龄', trigger: 'blur' },
+				],
+				national: [
+					{
+						required: true,
+						message: '请选择民族',
+						trigger: 'blur',
+					},
+				],
+				home_address: [
+					{
+						required: true,
+						message: '请输入家庭住址',
+						trigger: 'blur',
+					},
+				],
+				phone: [
+					{
+						required: true,
+						message: '请输入联系电话',
+						trigger: 'blur',
+					},
+				],
+			},
+			MaleOptions: [
+				{
+					value: '男',
+					lable: '男',
+				},
+				{
+					value: '女',
+					lable: '女',
+				},
+			],
 			imges: [
 				{ id: '1', url: img1 },
 				{ id: '2', url: img2 },
@@ -224,9 +387,23 @@ export default {
 				},
 			],
 			boardInfo: [],
+			NationalOptions: nationals.data,
 		}
 	},
 	methods: {
+		// 获取信息是否完整
+		async getOldManInfo() {
+			console.log(this.userInfo.ID_card_number)
+			const { data: res } = await this.$http.get('oldman/sreach', {
+				params: { sreachKey: this.userInfo.ID_card_number },
+			})
+			console.log(res)
+			if (res.meta.status !== 200) {
+				return
+			}
+			this.helpForm.address = res.data[0].home_address
+			this.infoStatus = true
+		},
 		async getBoardInfo() {
 			const { data: res } = await this.$http.get('/activity')
 			if (res.meta.status !== 200) return this.$message.error('获取失败')
@@ -235,20 +412,76 @@ export default {
 					this.boardInfo.push(item)
 				}
 			})
-			console.log(this.boardInfo)
 		},
 		handleChange(value) {
 			console.log(value)
 		},
+		addOldMan() {
+			this.$refs.addFormRef.validate(async (valid) => {
+				if (!valid) return
+				const { data: res } = await this.$http.post('oldman/add', {
+					rel_name: this.userInfo.rel_name,
+					male: this.addForm.male,
+					age: this.addForm.age,
+					national: this.addForm.national,
+					ID_card_number: this.userInfo.ID_card_number,
+					home_address: this.addForm.home_address,
+					phone: this.addForm.phone,
+				})
+				console.log(res)
+				if (res.meta.status !== 201)
+					return this.$message.error('完善信息失败')
+				this.$message.success('完善成功')
+				this.addDialogVisible = false
+				this.$router.push('/userhome')
+			})
+		},
+		addDialogClose() {
+			this.$refs.addFormRef.resetFields()
+		},
 		help() {
 			this.$refs.helpFormRef.validate(async (valid) => {
 				if (!valid) return
-				console.log(this.helpForm.type)
-				// const { data: res } = await this.$http.post('/order', {
-				// 	rel_name: this.userInfo.rel_name,
-				// 	add_address: this.helpForm.address,
-				//     post_type: this.helpForm.type
-				// })
+				// 核对信息是否完善
+				if (!this.infoStatus) {
+					this.$message.error('请完善基本信息')
+					this.addDialogVisible = true
+				}
+				console.log(this.helpForm)
+				const { data: res } = await this.$http.post('/order', {
+					real_name: this.userInfo.rel_name,
+					home_address: this.helpForm.address,
+					post_type: this.helpForm.service[0],
+					msg_main: this.helpForm.service[1] || null,
+					msg_note: this.helpForm.note,
+				})
+				if (res.meta.status !== 201) {
+					return this.$message.error('请求失败')
+				}
+				this.$message.success('请求成功')
+				this.helpForm = {
+					service: '',
+					address: '',
+					note: '',
+				}
+			})
+		},
+		feedback() {
+			this.$refs.fbFormRef.validate(async (valid) => {
+				if (!valid) return
+				const { data: res } = await this.$http.post('/order', {
+					real_name: '匿名' || this.userInfo.rel_name,
+					home_address: 'null',
+					post_type: this.fbForm.service[0],
+					msg_main: this.fbForm.service[1] || null,
+					msg_note: this.fbForm.note,
+				})
+				console.log(res)
+				if (res.meta.status !== 201)
+					return this.$message.error(res.meta.msg)
+				this.$message.success(res.meta.msg + '感谢您的反馈')
+				this.fbForm.service = ''
+				this.fbForm.note = ''
 			})
 		},
 	},
@@ -361,7 +594,5 @@ export default {
 		display: block;
 		text-align: center;
 	}
-}
-.el-from {
 }
 </style>

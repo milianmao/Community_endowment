@@ -59,6 +59,8 @@ export default {
 	created() {
 		this.getMenuList()
 		this.activePath = window.sessionStorage.getItem('activePath')
+		console.log()
+		this.$router.push(this.activePath)
 	},
 	data() {
 		return {
@@ -92,6 +94,7 @@ export default {
 		loginout() {
 			window.sessionStorage.removeItem('token')
 			window.sessionStorage.removeItem('Authorer')
+			window.sessionStorage.removeItem('activePath')
 			this.$router.push('/login')
 		},
 	},

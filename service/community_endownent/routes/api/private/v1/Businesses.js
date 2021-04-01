@@ -1,11 +1,11 @@
 var express = require('express')
 var router = express.Router()
 var mongoose = require('mongoose')
-var Order = mongoose.model('Order')
+var Businesses = mongoose.model('Businesses')
 
-// 获取服务工单列表
+// 获取服务商家列表
 router.get('/list', (req, res) => {
-	Order.find(function (err, doc) {
+	Businesses.find(function (err, doc) {
 		if (err) {
 			res.sendResult(null, 500, '服务器内部错误')
 			throw err
@@ -14,19 +14,17 @@ router.get('/list', (req, res) => {
 		res.sendResult(doc, 200, '获取列表成功')
 	})
 })
-
-// 添加服务工单
+// 添加服务商家
 router.post('/', (req, res) => {
-	const model = Order.create(req.body)
-	if (!model) return res.sendResult(null, 400, '请求失败')
-	res.sendResult(model, 201, '请求成功')
+	const model = Businesses.create(req.body)
+	if (!model) return res.sendResult(null, 400, '添加失败')
+	res.sendResult(model, 201, '添加成功')
 })
-
-// 修改工单状态
+// 修改服务商家信息
 router.put('/:id', (req, res) => {
 	console.log(req.body)
 	const _id = mongoose.Types.ObjectId(req.params.id)
-	Order.updateOne({ _id }, req.body, function (err, doc) {
+	Businesses.updateOne({ _id }, req.body, function (err, doc) {
 		console.log(doc)
 		if (err) {
 			res.sendResult(null, 500, '服务器内部错误')
@@ -40,31 +38,16 @@ router.put('/:id', (req, res) => {
 	})
 })
 
-// 根据状态查询
-router.get('/findByStatus', (req, res) => {
-	let status = req.query.status
-	Order.find({ status }, function (err, doc) {
-		if (err) {
-			res.sendResult(null, 500, '服务器内部错误')
-			throw err
-		}
-		if (doc.length) {
-			return res.sendResult(doc, 200, '查询成功')
-		} else {
-			return res.sendResult(null, 200, '结果为空')
-		}
-	})
-})
-// 查询工单信息
+// 查询服务商家信息
 router.get('/sreach', (req, res) => {
 	console.log(req.query.sreachKey)
 	let sreachKey = new RegExp(req.query.sreachKey, 'i')
-	Order.find(
+	Businesses.find(
 		{
 			$or: [
 				// 多条件查询，数组
-				{ real_name: { $regex: sreachKey } },
-				{ home_address: { $regex: sreachKey } },
+				{ name: { $regex: sreachKey } },
+				{ address: { $regex: sreachKey } },
 			],
 		},
 		function (err, doc) {
@@ -81,10 +64,9 @@ router.get('/sreach', (req, res) => {
 	)
 })
 
-// 删除工单
 router.delete('/:id', (req, res) => {
 	const _id = mongoose.Types.ObjectId(req.params.id)
-	Order.deleteOne({ _id }, function (err, doc) {
+	Businesses.deleteOne({ _id }, function (err, doc) {
 		if (err) {
 			res.sendResult(null, 500, '服务器内部错误')
 			throw err
