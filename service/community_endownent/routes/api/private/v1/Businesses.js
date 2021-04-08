@@ -16,9 +16,23 @@ router.get('/list', (req, res) => {
 })
 // 添加服务商家
 router.post('/', (req, res) => {
-	const model = Businesses.create(req.body)
-	if (!model) return res.sendResult(null, 400, '添加失败')
-	res.sendResult(model, 201, '添加成功')
+	Businesses.find(
+		{ $and: [{ name: req.body.name }, { address: req.body.address }] },
+		function (err, doc) {
+			if (err) {
+				res.sendResult(null, 500, '服务器内部错误')
+				throw err
+			}
+			console.log(doc)
+			if (doc.length) {
+				res.sendResult(null, 400, '.商家已存在')
+			} else {
+				const model = Businesses.create(req.body)
+				if (!model) return res.sendResult(null, 400, '添加失败')
+				res.sendResult(model, 201, '添加成功')
+			}
+		}
+	)
 })
 // 修改服务商家信息
 router.put('/:id', (req, res) => {
